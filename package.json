@@ -1,0 +1,32 @@
+{
+  "name": "project-management",
+  "version": "1.0.0",
+  "description": "a project management application for beginners",
+  "keywords": [
+    "self",
+    "learning",
+    "course",
+    "backend",
+    "API",
+    "Creations",
+    "Priya"
+  ],
+  "homepage": "https://github.com/Priya-webD/Backend-Mini-Projects#readme",
+  "bugs": {
+    "url": "https://github.com/Priya-webD/Backend-Mini-Projects/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Priya-webD/Backend-Mini-Projects.git"
+  },
+  "license": "ISC",
+  "author": "Priya",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "devDependencies": {
+    "prettier": "3.8.1"
+  }
+}
