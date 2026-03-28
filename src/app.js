@@ -19,4 +19,12 @@ app.use(cors({
 }),
 );
 
+
+ //import routers 
+import healthCheckRouter from "./routes/healthcheck.routes.js";
+
+//use routers 
+app.use("/api/v1/healthcheck", healthCheckRouter); // Use the health check router for the specified path
+
+
 export default app;
