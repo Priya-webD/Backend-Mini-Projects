@@ -1,5 +1,6 @@
 //import { urlencoded } from 'express';
 import mongoose, {Schema} from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const userSchema = new Schema({
 
@@ -51,5 +52,21 @@ const userSchema = new Schema({
         type: Date,
     }
 }, { timestamps: true });
+
+
+//adding encryption to password
+userSchema.pre("save", async function (next){
+    if(!this.isModified("password")) return next(); //if password is not modified then move to next middleware
+
+    this.password = await bcrypt.hash(this.password, 10); //hash the password with salt rounds of 10
+    next();
+})
+
+
+//verifying the password 
+userSchema.methods.isPasswordCorrect = async function (password){
+    return await bcrypt.compare(password, this.password);//compare the provided password with the hashed password in the database
+};
+
 
 export const User = mongoose.model('User', userSchema);
