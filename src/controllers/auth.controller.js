@@ -87,4 +87,54 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 );
 
-export { registerUser };
+const login = asyncHandler(async(req, res) => {
+    //implementation for user login 
+    const {email, password, username} = req.body; // Destructuring the email, password and username from the request body
+
+    // Check if the email is provided in the request body, 
+    // if not throw an error with a 400 status code and a message
+    if(!email){
+        throw new ApiError(400, "Email is required")
+    }
+    //checking if email exists in the database, if not throw an error with a 404 status code and a message
+    const user = await User.findOne({email});
+
+    if(!user){
+        throw new ApiError(400, "User doesn't exists");
+    }
+
+    const isPasswordValid = await user.isPasswordValid(password); 
+    // Check if the provided password is valid by comparing it with the hashed password stored in the database
+
+    if(!isPasswordValid){
+        throw new ApiError(400, "Invalid credentials"); // If the password is not valid, throw an error with a 400 status code and a message
+    }
+    
+    // If the email and password are valid, generate an access token and a refresh token for the user
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id); 
+
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken -emailVerificationToken -emailVerificationTokenExpiry");
+    // Find the logged-in user by their ID in the database and exclude sensitive fields like password, refresh token, email verification token and its expiry time from the result
+
+    const options = { // Set the options for the cookie
+         httpOnly: true, // Set the cookie to be accessible only through HTTP requests and not by client-side JavaScript
+         secure: true, // Set the cookie to be sent only over HTTPS connections
+    }
+
+    return res 
+        .status(200)
+        .cookie("accessToken", accessToken, options) // Set the access token in a cookie with the specified options
+        .cookie("refreshToken", refreshToken, options) // Set the refresh token in a cookie with the specified options
+        .json(
+            new ApiResponse(
+                200, {
+                    user: loggedInUser, // Return the logged-in user data in the response
+                    accessToken, // Return the access token in the response
+                    refreshToken // Return the refresh token in the response
+                },
+                "User logged in successfully" // Return a success message in the response
+            )
+        )
+})
+
+export { registerUser, login };
