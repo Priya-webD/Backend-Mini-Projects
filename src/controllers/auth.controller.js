@@ -137,4 +137,13 @@ const login = asyncHandler(async(req, res) => {
         )
 })
 
-export { registerUser, login };
+
+//adding routes for other parts 
+const getCurrentUser = asyncHandler (async(req, res) => {
+    //return res 
+    return res 
+        .status(200)
+        .json(newApiResponse(200, req.user, "Current user retrieved successfully"))
+});
+
+export { registerUser, login, getCurrentUser };
